@@ -5,37 +5,56 @@ describe "Static pages" do
   let(:base_title) {"Ruby on Rails Tutorial Sample App"}
 
   subject { page }
+
+
+  shared_examples_for "all static pages" do
+    it { page.should have_selector('h1', text: heading)}
+    it { page.should have_selector('title', text: full_title(page_title)) }
+  end
+
   describe "Home page" do
     before { visit root_path }
-
-    it { page.should have_selector('h1', :text => 'Sample App')}
-    it { page.should have_selector('title', text: full_title('')) }
-
-
-
+    let(:heading) { 'Sample App'}
+    let(:page_title) { '' }
+    it_should_behave_like "all static pages"
   end
 
   describe "Help page" do
     before { visit help_path }
+    let(:heading) { 'Help'}
+    let(:page_title) { 'Help' }
+    it_should_behave_like "all static pages"
 
-    it {page.should have_selector('h1', :text => 'Help')}
-    it { page.should have_selector('title', text: full_title('Help')) }
 
   end
 
   describe "About page" do
     before { visit about_path }
-
-    it {page.should have_selector('h1', :text => 'About Us')}
-    it { page.should have_selector('title', text: full_title('About')) }
-
+    let(:heading) { 'About Us'}
+    let(:page_title) { 'About' }
+    it_should_behave_like "all static pages"
   end
 
   describe "Contact page" do
     before { visit contact_path }
-    it {page.should have_selector('h1',
-                                  :text=> 'Contact')}
-    it { page.should have_selector('title', text: full_title('Contact')) }
+    let(:heading) { 'Contact'}
+    let(:page_title) { 'Contact' }
+    it_should_behave_like "all static pages"
+  end
+
+  it"should have the right links on the layout" do
+    visit root_path
+    click_link "About"
+    page.should have_selector 'title', text: full_title('About')
+    click_link "Help"
+    page.should have_selector 'title', text: full_title('Help')
+    click_link "Contact"
+    page.should have_selector 'title', text: full_title('Contact')
+    click_link "Home"
+    click_link "Sign up now!"
+    page.should have_selector 'title', text: full_title('Sign Up')
+    click_link "sample app"
+    page.should have_selector 'title', text: full_title('')
   end
 
 end
